@@ -3,6 +3,11 @@ from bs4 import BeautifulSoup
 import re
 import json
 
+def str_to_seconds(x):
+    minsec = [int(s) for s in x.split() if s.isdigit()]
+    minsec[0] = minsec[0] * 60
+    return sum(minsec)
+
 with Browser() as browser:
     slug = "https://secure.prontocycleshare.com"
     url = slug + "/profile/login"
@@ -43,9 +48,9 @@ with Browser() as browser:
         for z in trip_soup.find_all('div', {"class":"ed-table__item__info\
             ed-table__item__info_trip-duration ed-table__col\
             ed-table__col_trip-duration "}):
-            duration.append({'duration':z.get_text().strip()})
+            duration.append({'duration':str_to_seconds(z.get_text().strip())})
 
 results = zip(date, start, end, duration)
 
-with open("Version3.json", "w") as outfile:
+with open("my_trips.json", "w") as outfile:
     json.dump(results, outfile, indent=4)
