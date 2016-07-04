@@ -17,6 +17,12 @@ body {
   stroke: #000;
 }
 
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -26,7 +32,7 @@ var margin = {top: 20, right: 20, bottom: 30, left:100},
     width = 1210 - margin.left - margin.right,
     height = 600 - margin.top - margin.bottom;
 
-var parseDate = d3.time.format("%m/%d/%Y %H:%M").parse;
+var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -112,17 +118,20 @@ d3.tsv("d3_demo_data.tsv", function(error, data) {
 			.style("text-anchor", "end")
 			.text(function(d) { return d; });
 
-  var mean_time = d3.mean(data,function(d) { return +d.tripduration});
+var _movingSum;
+var movingAverageLine = d3.svg.line()
+  .x(function(d) { return x(d.starttime); })
+  .y(function(d,i) {
+      if (i === 0) {
+         return _movingSum = 0;
+      } else {
+         _movingSum += d.tripduration;
+      }
+        return y(_movingSum / i);
+ })
+.interpolate("linear");
 
-//need to replace 192 with mean_time and scale to keep in svg
-
-  svg.append("line")
-      .style("stroke", "red")
-      .attr('x1', 0)
-      .attr('x2', 1000)
-      .attr('y1', 192)
-      .attr('y2', 192);
-
+svg.append('svg:path').attr('class', 'line').attr("d", movingAverageLine(data));
 });
 
 </script>
