@@ -118,7 +118,9 @@ d3.tsv("d3_demo_data.tsv", function(error, data) {
 			.style("text-anchor", "end")
 			.text(function(d) { return d; });
 
-var _movingSum;
+var tsarray = d3.entries(data, function(d) { return d.tripduration; });
+
+var _movingSum = tsarray[0].value.tripduration;
 var movingAverageLine = d3.svg.line()
   .x(function(d) { return x(d.starttime); })
   .y(function(d,i) {
