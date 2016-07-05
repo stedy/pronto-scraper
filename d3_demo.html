@@ -120,20 +120,37 @@ d3.tsv("d3_demo_data.tsv", function(error, data) {
 
 var tsarray = d3.entries(data, function(d) { return d.tripduration; });
 
-var _movingSum = tsarray[0].value.tripduration;
+var runningMean = tsarray[0].value.tripduration;
 var movingAverageLine = d3.svg.line()
   .x(function(d) { return x(d.starttime); })
   .y(function(d,i) {
       if (i === 0) {
-         return _movingSum = 0;
+         return runningMean = 0;
       } else {
-         _movingSum += d.tripduration;
+         runningMean += d.tripduration;
       }
-        return y(_movingSum / i);
+        return y(runningMean / i);
  })
 .interpolate("linear");
 
 svg.append('svg:path').attr('class', 'line').attr("d", movingAverageLine(data));
+
+var pr = d3.entries(data, function(d) { return d.my_besttime; });
+var pr0 = pr[0].value.my_besttime;
+var cr = d3.entries(data, function(d) { return d.route_besttime; });
+var cr0 = cr[0].value.route_besttime;
+
+document.querySelector(".course").appendChild(document.createTextNode(cr0))
+document.querySelector(".mine").appendChild(document.createTextNode(pr0))
+
 });
 
+
 </script>
+
+<html>
+<div>
+  <p>Course fastest time is <span class="course"></span>
+  <p>Your fastest time is <span class="mine"></span>
+</div>
+</html>
