@@ -2,6 +2,7 @@ from splinter import Browser
 from bs4 import BeautifulSoup
 import re
 import json
+import time
 
 def str_to_seconds(x):
     minsec = [int(s) for s in x.split() if s.isdigit()]
@@ -16,8 +17,8 @@ with Browser() as browser:
     browser.fill('_password', 'LJQ8vuK8zs')
     button = browser.find_by_text('Log in!')
     button.click()
+    time.sleep(5)
     trips_main = browser.html
-
     main_soup = BeautifulSoup(trips_main)
     trip_link = main_soup.findAll('a', text=re.compile('Trips'))
     browser.visit(slug + trip_link[0]['href'])
